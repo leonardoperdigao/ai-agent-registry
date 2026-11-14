@@ -66,7 +66,12 @@ int lerTexto(const char *mensagem, char *destino, int capacidade)
                 continue;
             }
         }
-        destino[strcspn(destino, "\r\n")] = '\0';
+        destino[strcspn(destino, "\n")] = '\0';
+        /* Aceita CRLF no fim da linha, mas preserva controles internos
+           para que textoValido os rejeite sem truncar silenciosamente. */
+        size_t tamanho = strlen(destino);
+        if (tamanho > 0 && destino[tamanho - 1] == '\r')
+            destino[tamanho - 1] = '\0';
         if (!textoValido(destino, capacidade - 1)) {
             puts("Digite um texto preenchido, em UTF-8 e sem caracteres de controle.");
             continue;

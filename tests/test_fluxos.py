@@ -70,6 +70,18 @@ with tempfile.TemporaryDirectory(prefix='pim-testes-') as pasta:
     saida = executar(vazio, '4\nInexistente\n4\nOutro\n0\n0\n')
     assert 'Nenhum agente encontrado' in saida
 
+    controles = pasta / 'controles.txt'
+    saida = executar(controles, '1\nNome\nTexto antes\rtexto depois\n'
+                     'Instrucoes completas\n4\rabc\n3\n0\n')
+    assert saida.count('sem caracteres de controle') == 2
+    saida = executar(controles, '3\n1\n0\n0\n')
+    assert 'Instrucoes: Instrucoes completas' in saida and 'Nota: 3.00' in saida
+    assert 'Instrucoes: Texto antes' not in saida
+    crlf = pasta / 'crlf.txt'
+    saida = executar(crlf, '1\r\nNome CRLF\r\nInstrucoes CRLF\r\n4.5\r\n2\r\n0\r\n')
+    assert 'Nome: Nome CRLF | Nota: 4.50' in saida
+    assert 'sem caracteres de controle' not in saida
+
     corrompido = pasta / 'corrompido.txt'
     for conteudo in ['invalido\n', 'PIM2 1\n51 52\n',
                      'PIM2 1\n1 2\n1 nan\nNome\nScript\n',
