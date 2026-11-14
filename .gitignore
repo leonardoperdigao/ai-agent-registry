@@ -1,0 +1,4 @@
+/programa
+/dados/*.txt
+/dados/*.tmp
+__pycache__/
